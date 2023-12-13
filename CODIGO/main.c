@@ -61,6 +61,7 @@ int vendaProduto() {
           scanf("%d",&quantidadeDaVenda);
 
           if (Produtos[0][rep] >= quantidadeDaVenda) {
+            Relatorio[0]=rep;
             registraVenda(quantidadeDaVenda);
           }
           else if (Produtos[0][rep] < quantidadeDaVenda) {
