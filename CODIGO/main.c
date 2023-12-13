@@ -9,36 +9,77 @@ vendas do dia, gerar um relatório de meias em estoque e um relatório de vendas
 do dia com o lucro obtido.
 */
 
-float Produtos[5][4]; // Matriz Globalizada de estoque
+float Produtos[4][4]; // Matriz Globalizada de estoque
 float Relatorio[4];   // Matriz Globalizada para armazenagem de dados relevantes
 const char *categorias[] = {"Infantis Lisas", "Infantis Estampadas",
                             "Adultas Lisas", "Adultas Estampadas"};
 
 // Função para Inicializar o Programa
 int inicializarEstoque() {
-  for (int i = 0; i < 4; i++) {
+  int i;
+  for (i = 0; i < 4; i++) {
     
     printf("Forneça a quantidade de Meias %s:\n--> ", categorias[i]);
-    scanf("%f", &Produtos[0][i]);
+    scanf("%f", &Produtos[i][0]);
 
     printf("Forneça a preço das Meias %s:\n--> ", categorias[i]);
-    scanf("%f", &Produtos[1][i]);
+    scanf("%f", &Produtos[i][1]);
 
     printf("Forneça a custo de produção de Meias %s:\n--> ", categorias[i]);
-    scanf("%f", &Produtos[2][i]);
+    scanf("%f", &Produtos[i][2]);
 
     printf("\n\n");
+  }
+
+  // Formatação dos Relatorios
+  for(i = 0; i < 4; i++) {
+    Relatorio[i]=0;
+    Produtos[i][3]=0;
   }
 }
 
 // função para Imprimir o Valores do Dia
-int relatorioVendasELucro() {}
+int relatorioVendasELucro() {
+  int x;
+  printf("\nRelatorio:\n");
+  for(x = 0; x < 4; x++) {
+    printf("%.0f Vendas de %s = R$%.2f\n", Produtos[3][x], categorias[x], Produtos[1][x]*Produtos[3][x]);
+  }
+  printf("Arrecadação Bruta = R$%.2f\n", Relatorio[1]);
+  printf("Custo Total de Produção = R$%.2f\n", Relatorio[2]);
+  printf("\nLucro Liquido = R$%.2f\n", Relatorio[3]);
+
+  printf("\n");
+}
 
 // Função para Imprimir o Estoque
-int relatorioEstoque() {}
+int relatorioEstoque() {
+  printf("\nEstoque:\n");
+  printf("Infantil Lisa = %.0f\nInfantil Estampada = %.0f\nAdulta Lisa = %.0f\nAdulta Estampada = %.0f\n" ,Produtos[0][0], Produtos[1][0], Produtos[2][0], Produtos[3][0]);
 
-// Função que realiza Alteração no Estoque
-int registraVenda(int quantidadeDaVenda) {}
+  printf("\n");
+}
+
+// Função que realiza Alteração no Estoque + Relatorio
+int registraVenda(float quantidadeDaVenda,int rep) {
+  int z;
+  // Redução de Estoque Especifica
+  Produtos[rep][0] = Produtos[rep][0]-quantidadeDaVenda;
+  // Quantidade de Venda Especifica
+  Produtos[rep][3] += quantidadeDaVenda;
+  // Quantidade de Venda Totais
+  Relatorio[0] += quantidadeDaVenda;
+  // Lucro Bruto
+  Relatorio[1] += quantidadeDaVenda*Produtos[1][rep];
+  // Custo Total
+  for(rep = 0; rep < 4; rep++) {
+    Relatorio[2] += Produtos[rep][0]*Produtos[rep][2];
+  }
+  // Lucro Liquido
+  Relatorio[3] = Relatorio[1]-Relatorio[2];
+
+  printf("\n");
+}
 
 // Função para escolha de produto
 int vendaProduto() {
@@ -49,27 +90,27 @@ int vendaProduto() {
   scanf("%d",&opcaoVenda);
 
   if (opcaoVenda > 4 && opcaoVenda < 1) {
-    printf("\nProduto não encontrado!\n");
+    printf("\nProduto não encontrado!\n\n");
   }
   else {
     for(int rep = 0; rep < 4; rep++) {
       if (opcaoVenda == rep) {
-        if (Produtos[0][rep] > 0) {
+        if (Produtos[rep][0] > 0) {
           printf("\nDigite a quantidade de produtos vendida: ");
 
-          int quantidadeDaVenda;
-          scanf("%d",&quantidadeDaVenda);
+          float quantidadeDaVenda;
+          scanf("%f",&quantidadeDaVenda);
 
-          if (Produtos[0][rep] >= quantidadeDaVenda) {
-            registraVenda(quantidadeDaVenda);
+          if (Produtos[rep][0] >= quantidadeDaVenda) {
+            registraVenda(quantidadeDaVenda, rep);
           }
-          else if (Produtos[0][rep] < quantidadeDaVenda) {
-          printf("\nNão a produtos suficientes no estoque!\n");
+          else if (Produtos[rep][0] < quantidadeDaVenda) {
+          printf("\nNão a produtos suficientes no estoque!\n\n");
           }
         }
 
-        else if (Produtos[0][rep] <= 0) {
-          printf("\nNão a mais produtos no estoque!\n");
+        else if (Produtos[rep][0] <= 0) {
+          printf("\nNão a mais produtos no estoque!\n\n");
         }
       }
     }
@@ -98,10 +139,14 @@ int main(void) {
       vendaProduto();
       break;
     case 2:;
+      relatorioEstoque();
       break;
     case 3:;
+      relatorioVendasELucro();
       break;
     case 4:;
+      relatorioEstoque();
+      relatorioVendasELucro();
       break;
     case 5:
       printf("Encerrando Sistema!\n");
