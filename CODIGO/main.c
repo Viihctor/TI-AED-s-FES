@@ -1,6 +1,6 @@
 #include <locale.h>
 #include <stdio.h>
-// Victor Lucas Tornelli 12/12/2023.
+// Victor Lucas Tornelli 13/12/2023.
 // Matheus Atantes Coimbra 13/12/2023
 /*
 O objetivo do programa é a gestão de estoque e registro de vendas diárias. O
