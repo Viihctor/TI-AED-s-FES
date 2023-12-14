@@ -1,7 +1,7 @@
 #include <locale.h>
 #include <stdio.h>
-// Victor Lucas Tornelli 12/12/2023.
-// Matheus Atantes Coimbra 13/12/2023
+// Victor Lucas Tornelli 13/12/2023.
+// Matheus Atantes Coimbra 14/12/2023
 /*
 O objetivo do programa é a gestão de estoque e registro de vendas diárias. O
 programa deve permitir apenas a venda de produtos em estoque, registrar as
@@ -18,7 +18,7 @@ const char *categorias[] = {"Infantis Lisas", "Infantis Estampadas",
 // Função para Inicializar o Programa
 int inicializarEstoque() {
   int i;
-  for (i = 0; i < 4; i++) {
+  for(i = 0; i < 4; i++) {
     
     printf("Forneça a quantidade de Meias %s:\n--> ", categorias[i]);
     scanf("%f", &Produtos[i][quantidade]);
@@ -36,6 +36,10 @@ int inicializarEstoque() {
   for(i = 0; i < 4; i++) {
     Relatorio[i]=0;
     Produtos[i][venda]=0;
+  }
+  // Calculo do Custo total
+  for(i = 0; i < 4; i++) {
+    Relatorio[2] += Produtos[i][quantidade]*Produtos[i][custo];
   }
 }
 
@@ -62,20 +66,15 @@ int relatorioEstoque() {
 }
 
 // Função que realiza Alteração no Estoque + Relatorio
-int registraVenda(float quantidadeDaVenda,int rep) {
-  rep = rep-1;
+int registraVenda(float quantidadeDaVenda,int opcaoVenda) {
   // Redução de Estoque Especifica
-  Produtos[rep][quantidade] -= quantidadeDaVenda;
+  Produtos[opcaoVenda][quantidade] -= quantidadeDaVenda;
   // Quantidade de Venda Especifica
-  Produtos[rep][venda] += quantidadeDaVenda;
+  Produtos[opcaoVenda][venda] += quantidadeDaVenda;
   // Quantidade de Venda Totais
   Relatorio[0] += quantidadeDaVenda;
   // Lucro Bruto
-  Relatorio[1] += quantidadeDaVenda*Produtos[rep][preco];
-  // Custo Total
-  for(rep = 0; rep < 4; rep++) {
-    Relatorio[2] += Produtos[rep][quantidade]*Produtos[rep][custo];
-  }
+  Relatorio[1] += quantidadeDaVenda*Produtos[opcaoVenda][preco];
   // Lucro Liquido
   Relatorio[3] = Relatorio[1]-Relatorio[2];
 
@@ -85,38 +84,30 @@ int registraVenda(float quantidadeDaVenda,int rep) {
 // Função para escolha de produto
 int vendaProduto() {
   printf("\nEntre com o tipo de meia vendida!\n");
-  printf("(1)-Infantil Lisa == %.0f | (2)-Infantil Estampada == %.0f | (3)-Adulta Lisa == %.0f | (4)-Adulta Estampada == %.0f |\n" ,Produtos[0][quantidade], Produtos[1][quantidade], Produtos[2][quantidade], Produtos[3][quantidade]);
+  printf("(1)-Infantil Lisa == %.0f | (2)-Infantil Estampada == %.0f | (3)-Adulta Lisa == %.0f | (4)-Adulta Estampada == %.0f\n--> " ,Produtos[0][quantidade], Produtos[1][quantidade], Produtos[2][quantidade], Produtos[3][quantidade]);
 
   int opcaoVenda;
   scanf("%d",&opcaoVenda);
+  opcaoVenda -= 1;
 
-  int rep;
-  if (opcaoVenda >= 1 && opcaoVenda <= 4) {
-    for(rep = 0; rep < 4; rep++) {
-      if (opcaoVenda == rep) {
-        if (Produtos[rep][quantidade] > 0) {
-          printf("\nDigite a quantidade de produtos vendida: ");
-
-          float quantidadeDaVenda;
-          scanf("%f",&quantidadeDaVenda);
-
-          if (Produtos[rep][quantidade] >= quantidadeDaVenda) {
-            registraVenda(quantidadeDaVenda, rep);
-          }
-          else if (Produtos[rep][quantidade] < quantidadeDaVenda) {
-          printf("\nNão a produtos suficientes no estoque!\n\n");
-          }
-        }
-
-        else if (Produtos[rep][quantidade] <= 0) {
-          printf("\nNão a mais produtos no estoque!\n\n");
-        }
-      }
-    }
+  if (opcaoVenda < 0) {
+    printf("\nProduto não encontrado!\n\n");
+  }
+  else if (opcaoVenda > 3) {
+    printf("\nProduto não encontrado!\n\n");
   }
 
   else {
-    printf("\nProduto não encontrado!\n\n");
+    printf("\nDigite a quantidade de produtos vendida: ");
+    float quantidadeDaVenda;
+    scanf("%f",&quantidadeDaVenda);
+
+    if(quantidadeDaVenda <= Produtos[opcaoVenda][quantidade]) {
+      registraVenda(quantidadeDaVenda, opcaoVenda);
+    }
+    else {
+      printf("\nNão a mais produtos no estoque!\n\n");
+    }
   }
 }
 
